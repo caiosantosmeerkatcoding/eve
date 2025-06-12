@@ -144,7 +144,7 @@ const memories = [
     title: "Te amo, princesa",
     subtitle: "Quero viver infinitas aventuras contigo 💕",
     description:
-      "Aqui é a parte que eu revelo pra você que nesse exato momento que estou criando esse app a gente está assistindo Dragon Ball, amo tudo que fazemos juntos e sua companhia é que torna essas experiências prazerosas ❤️",
+      "Aqui é a parte que eu revelo pra você que nesse exato momento que estou criando esse app a gente está assistindo Dragon Ball, agora já se passaram algumas horas e você está irritada porque ainda não fui deitar. Amo tudo que fazemos juntos e sua companhia é que torna essas experiências prazerosas ❤️",
     startDate: RELATIONSHIP_START,
     icon: Heart,
     images: [
