@@ -13,7 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Gift,
-  Infinity,
+  Infinity as InfinityIcon,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import SpotifyWidget from "@/components/spotify-widget"
@@ -158,9 +158,9 @@ const memories = [
     title: "Feliz dia dos namorados!",
     subtitle: "Te amo bae",
     description:
-      "Quando me pediu para fazer uma playlist eu pensei em fazer algo a mais, talvez esteja totalmente bugado pois não terei tempo de testar mas sei que você irá relevar 😝. Ah, é só clicar na nota musical acima para acessar sua playlist, ou no ícone abaixo para reiniciar essa galeria, beijos.",
+      "Quando me pediu para fazer uma playlist eu pensei em fazer algo a mais, talvez esteja totalmente bugado pois não terei tempo de testar (tenho que ir dormir são 1 da manhã) mas sei que você irá relevar 😝. Ah, é só clicar na nota musical acima para acessar sua playlist, ou no ícone abaixo para reiniciar essa galeria, beijos.",
     startDate: new Date(),
-    icon: Infinity,
+    icon: InfinityIcon,
     images: [], // Sem imagens
     duration: null, // Não passa automaticamente
   },
@@ -334,7 +334,7 @@ export default function ValentineApp() {
 
   // Função para avançar para a próxima imagem
   const goToNextImage = () => {
-    if (currentMemoryData.images.length > 1) {
+    if (currentMemoryData.images && currentMemoryData.images.length > 1) {
       const nextIndex = (currentImageIndex + 1) % currentMemoryData.images.length
       setNextImageIndex(nextIndex)
       setIsTransitioning(true)
@@ -349,6 +349,9 @@ export default function ValentineApp() {
 
   // Função para quando o usuário clica na imagem
   const handleImageClick = () => {
+    // Verifica se há imagens suficientes para avançar
+    if (!currentMemoryData.images || currentMemoryData.images.length < 2) return
+
     clearTimers()
     goToNextImage()
     startImageTimer()
@@ -356,7 +359,7 @@ export default function ValentineApp() {
 
   // Função para iniciar o timer de imagens e progresso
   const startImageTimer = () => {
-    if (currentMemoryData.images.length > 1) {
+    if (currentMemoryData.images && currentMemoryData.images.length > 1) {
       clearTimers()
       setImageProgress(0)
 
@@ -386,7 +389,7 @@ export default function ValentineApp() {
 
   // Auto-advance images apenas se houver múltiplas imagens
   useEffect(() => {
-    if (currentMemoryData.images.length > 1) {
+    if (currentMemoryData.images && currentMemoryData.images.length > 1) {
       startImageTimer()
     }
 
@@ -401,9 +404,10 @@ export default function ValentineApp() {
   }
 
   const daysCount = calculateDays(currentMemoryData.startDate)
-  const titleWithDays = currentMemoryData.title.includes("{days}")
-    ? currentMemoryData.title.replace("{days}", daysCount.toString())
-    : currentMemoryData.title
+  const rawTitle = currentMemoryData.title?.toString() ?? ""
+  const titleWithDays = rawTitle.includes("{days}")
+    ? rawTitle.replace("{days}", daysCount.toString())
+    : rawTitle
 
   const IconComponent = currentMemoryData.icon
 
@@ -507,7 +511,7 @@ export default function ValentineApp() {
       <div className="h-full flex flex-col justify-center items-center px-3 py-2">
         <div className="w-full max-w-md flex flex-col items-center justify-center gap-3">
           {/* Image Carousel - Maior para aproveitar a tela */}
-          {!isIntroSection && !isConclusionSection && (
+          {!isIntroSection && !isConclusionSection && currentMemoryData.images && currentMemoryData.images.length > 0 && (
             <div className="relative w-full rounded-xl overflow-hidden">
               {/* Progress Bar para as fotos - agora dentro do container da imagem com bordas arredondadas */}
               {currentMemoryData.images.length > 1 && (
@@ -525,25 +529,33 @@ export default function ValentineApp() {
               >
                 {/* Current Image */}
                 <div className={`absolute inset-0 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-                  <Image
-                    src={currentMemoryData.images[currentImageIndex] || "/placeholder.svg"}
-                    alt="Memória especial"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
+                  {currentMemoryData.images.length > 0 ? (
+                      <Image
+                        src={currentMemoryData.images[currentImageIndex]}
+                        alt="Memória especial"
+                        fill
+                        className="object-cover"
+                        priority
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-black/30 text-white text-sm">
+                        Sem imagem
+                      </div>
+                    )}
                 </div>
                 
                 {/* Next Image (preloaded) */}
                 {currentMemoryData.images.length > 1 && (
                   <div className={`absolute inset-0 transition-opacity duration-500 ${isTransitioning ? 'opacity-100' : 'opacity-0'}`}>
-                    <Image
-                      src={currentMemoryData.images[nextImageIndex] || "/placeholder.svg"}
-                      alt="Próxima memória"
-                      fill
-                      className="object-cover"
-                      priority
-                    />
+                    {currentMemoryData.images.length > 1 && (
+                      <Image
+                        src={currentMemoryData.images[nextImageIndex]}
+                        alt="Próxima memória"
+                        fill
+                        className="object-cover"
+                        priority
+                      />
+                    )}
                   </div>
                 )}
                 
@@ -668,7 +680,7 @@ export default function ValentineApp() {
                 >
                   <div className="relative">
                     {/* Infinito de fundo (contorno) */}
-                    <Infinity
+                    <InfinityIcon
                       className="h-20 w-20 text-white stroke-2 fill-none transition-all duration-300 group-hover:scale-110"
                       strokeWidth={2}
                     />
@@ -680,13 +692,13 @@ export default function ValentineApp() {
                         clipPath: `inset(0 ${100 - infinityFillProgress}% 0 0)`,
                       }}
                     >
-                      <Infinity className="h-20 w-20 text-purple-300 fill-purple-300 transition-all duration-100" />
+                      <InfinityIcon className="h-20 w-20 text-purple-300 fill-purple-300 transition-all duration-100" />
                     </div>
 
                     {/* Efeito de brilho quando preenchendo */}
                     {isInfinityFilling && (
                       <div className="absolute inset-0 animate-pulse">
-                        <Infinity className="h-20 w-20 text-purple-200 fill-purple-200 opacity-50" />
+                        <InfinityIcon className="h-20 w-20 text-purple-200 fill-purple-200 opacity-50" />
                       </div>
                     )}
                   </div>
@@ -728,10 +740,6 @@ export default function ValentineApp() {
                     <p className="text-gray-700 text-sm leading-relaxed">{currentMemoryData.description}</p>
                   </div>
                 )}
-
-                {/* {!isFinalSection && !isAdventuresSection && (
-                  <div className="mt-2 text-xs text-gray-500"> + {daysCount} dias de amor e felicidade ✨</div>
-                )} */}
               </CardContent>
             </Card>
           )}
