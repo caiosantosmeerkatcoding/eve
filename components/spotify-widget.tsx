@@ -62,7 +62,7 @@ export default function SpotifyWidget() {
 
       setCurrentTrack(mockTrack)
       setIsLoading(false)
-    } catch (err) {
+    } catch {
       setError("Erro ao carregar música")
       setIsLoading(false)
     }
