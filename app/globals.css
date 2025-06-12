@@ -2,26 +2,108 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    overflow: hidden; /* Prevenir rolagem */
+    touch-action: manipulation; /* Melhorar desempenho de toque */
+    height: 100vh;
+    height: 100dvh; /* Usar altura dinâmica da viewport em dispositivos móveis */
+    margin: 0;
+    padding: 0;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Prevenir zoom em dispositivos móveis */
+  input,
+  button,
+  select,
+  textarea {
+    font-size: 16px;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Smooth transitions for image changes */
+.image-transition {
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+/* Transição suave estilo Stories */
+.image-slide {
+  @apply absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out opacity-0;
+  z-index: 0;
+}
+
+.image-slide-active {
+  @apply opacity-100 z-10;
+}
+
+/* Custom scrollbar para dispositivos que suportam */
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+/* Utility classes para navegação por toque */
+.touch-auto\:opacity-50:active {
+  opacity: 0.5;
+}
+
+/* Cursor personalizado para áreas de navegação */
+.cursor-e-resize {
+  cursor: e-resize;
+}
+
+.cursor-w-resize {
+  cursor: w-resize;
+}
+
+/* Otimizações para tela 2400x1080 */
+@media screen and (min-width: 400px) and (max-width: 500px) {
+  .max-h-\[60vh\] {
+    max-height: 65vh;
+  }
+}
+
+/* Ajustes para telas muito altas */
+@media screen and (min-height: 800px) {
+  .max-h-\[60vh\] {
+    max-height: 55vh;
+  }
+
+  .max-h-\[20vh\] {
+    max-height: 25vh;
   }
 }
